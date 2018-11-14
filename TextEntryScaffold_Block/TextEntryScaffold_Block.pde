@@ -275,8 +275,8 @@ void nextTrial()
     System.out.println("Time taken on this trial: " + (millis()-lastTime)); //output
     System.out.println("Time taken since beginning: " + (millis()-startTime)); //output
     System.out.println("==================");
-    lettersExpectedTotal+=currentPhrase.length();
-    lettersEnteredTotal+=currentTyped.length();
+    lettersExpectedTotal+=currentPhrase.trim().length();
+    lettersEnteredTotal+=currentTyped.trim().length();
     errorsTotal+=computeLevenshteinDistance(currentTyped.trim(), currentPhrase.trim());
 
     lastIndex = -1;
