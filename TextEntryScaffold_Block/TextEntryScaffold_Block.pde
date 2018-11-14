@@ -219,18 +219,15 @@ void mousePressed()
     if(clickedIndex == 14){
       currentTyped += " ";
       currentLetter = "_";
-      selected = 0;
     }
     else{
       currentTyped += leftKeys[clickedIndex];
       currentLetter = leftKeys[clickedIndex];
-      selected = 0;
     }
   }
   else if(selected == 2  && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 304)){
     // If we're focused on the left block and we clicked inside the block
     int clickedRow = floor((mouseY - topOfKeys)/101);
-    println(clickedRow);
     int clickedCol = floor((mouseX - leftEdge)/91.2);
     int clickedIndex = clickedRow * 5 + clickedCol;
 
@@ -241,12 +238,10 @@ void mousePressed()
     if(clickedIndex == 10){
       currentTyped += " ";
       currentLetter = "_";
-      selected = 0;
     }
     else{
       currentTyped += rightKeys[clickedIndex];
       currentLetter = rightKeys[clickedIndex];
-      selected = 0;
     }
   }
 
