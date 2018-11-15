@@ -56,6 +56,10 @@ int selected = 0;
 // Haptic feedback event
 Activity act;
 
+//Displaying diagnostics
+float adjusted_WPM;
+float accuracy;
+
 //You can modify anything in here. This is just a basic implementation.
 void setup()
 {
@@ -89,6 +93,8 @@ void draw()
     fill(128);
     textAlign(CENTER);
     text("Finished", 280, 150);
+    text("Accuracy: " + ((1 - accuracy)*100), 280, 200);
+    text("Adjusted WPM: " + adjusted_WPM, 280, 250);
     return;
   }
 
@@ -333,6 +339,9 @@ void nextTrial()
     System.out.println("Penalty: " + penalty);
     System.out.println("WPM w/ penalty: " + (wpm-penalty)); //yes, minus, becuase higher WPM is better
     System.out.println("==================");
+
+    adjusted_WPM = wpm - penalty;
+    accuracy = errorsTotal/lettersExpectedTotal;
 
     currTrialNum++; //increment by one so this mesage only appears once when all trials are done
     return;
