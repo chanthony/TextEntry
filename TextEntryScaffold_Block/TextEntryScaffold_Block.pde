@@ -191,6 +191,12 @@ void draw()
         }
       }
       text("\u2A3D\u2A3C", leftEdge + 228, topOfKeys + 273 + 55);
+
+      ellipseMode(RADIUS);
+      fill(156, 227, 233);
+      ellipse(leftEdge + 401, topOfKeys - 45, 35, 35);
+      fill(255);
+      triangle(leftEdge + 401 - 10, topOfKeys - 45 - 20, leftEdge + 401 - 10, topOfKeys - 45 + 20, leftEdge + 401 + 20, topOfKeys - 45);
     }
     
     // If focused on right block
@@ -205,6 +211,12 @@ void draw()
         }
       }
       text("\u2A3D\u2A3C", leftEdge + 228, topOfKeys + 273 + 55);
+
+      ellipseMode(RADIUS);
+      fill(238, 169, 153);
+      ellipse(leftEdge + 55, topOfKeys - 45, 35, 35);
+      fill(255);
+      triangle(leftEdge + 55 + 10, topOfKeys - 45 + 20, leftEdge + 55 + 10, topOfKeys - 45 - 20, leftEdge + 55 - 20, topOfKeys - 45);
     }
 
     stroke(0);
@@ -241,10 +253,12 @@ void mousePressed()
   else if(selected == 0 && didMouseClick(leftEdge + sizeOfInputArea/2, topOfKeys, sizeOfInputArea/2, sizeOfInputArea)){
     selected = 2;
   }
-  // If they click on the blank space unfocus
-  else if(didMouseClick(leftEdge, topOfKeys - 91, sizeOfInputArea, 91)){
-    selected = 0;
-  }  
+  else if(selected == 1 && didMouseClick(leftEdge + 341, topOfKeys - 90, 90, 90)){
+    selected = 2;
+  }
+  else if(selected == 2 && didMouseClick(leftEdge, topOfKeys - 90, 90, 90)){
+    selected = 1;
+  }
   else if(selected == 1 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
     // If we're focused on the left block and we clicked inside the block
     int clickedRow = floor((mouseY - topOfKeys)/91);
@@ -314,6 +328,7 @@ void nextTrial()
 
     lastIndex = -1;
     curClicks = 0;
+    selected = 0;
   }
 
   //probably shouldn't need to modify any of this output / penalty code.
