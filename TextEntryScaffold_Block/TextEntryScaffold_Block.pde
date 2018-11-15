@@ -82,7 +82,7 @@ void setup()
 //You can modify anything in here. This is just a basic implementation.
 void draw()
 {
-  background(255); //clear background
+  background(105); //clear background
 
   drawWatch();
   fill(105);
@@ -90,7 +90,7 @@ void draw()
 
   if (finishTime!=0)
   {
-    fill(128);
+    fill(255);
     textAlign(CENTER);
     text("Finished", 280, 150);
     text("Accuracy: " + ((1 - accuracy)*100), 280, 200);
@@ -100,7 +100,7 @@ void draw()
 
   if (startTime==0 & !mousePressed)
   {
-    fill(128);
+    fill(255);
     textAlign(CENTER);
     text("Click to start time!", 280, 550); //display this messsage until the user clicks!
   }
@@ -115,9 +115,8 @@ void draw()
   {
     //feel free to change the size and position of the target/entered phrases and next button 
     textAlign(LEFT); //align the text left
-    fill(0);
+    fill(255);
     text("Phrase " + (currTrialNum+1) + " of " + totalTrialNum, 70, 550); //draw the trial count
-    fill(0);
     text("Target:   " + currentPhrase, 70, 600); //draw the target string
     text("Entered:  " + currentTyped +"|", 70, 640); //draw what the user has entered thus far 
     
