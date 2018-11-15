@@ -65,7 +65,7 @@ void setup()
 
   orientation(PORTRAIT); //can also be PORTRAIT -- sets orientation on android device
   size(1300, 2300); //Sets the size of the app. You should modify this to your device's native size. Many phones today are 1080 wide by 1920 tall.
-  textFont(createFont("Arial", 24)); //set the font to arial 24
+  textFont(createFont("arial.ttf", 36)); //set the font to arial 24
   noStroke(); //my code doesn't use any strokes.
   
   leftEdge = width/2-sizeOfInputArea/2 - 100;
