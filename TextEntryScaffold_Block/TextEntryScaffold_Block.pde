@@ -102,6 +102,7 @@ void draw()
   if (startTime==0 & mousePressed)
   {
     nextTrial(); //start the trials!
+    selected = 0;
   }
 
   if (startTime!=0)
@@ -207,7 +208,7 @@ void draw()
     // fill(0, 255, 0); //green button
     // rect(width/2-sizeOfInputArea/2+sizeOfInputArea/2, height/2-sizeOfInputArea/2+sizeOfInputArea/2, sizeOfInputArea/2, sizeOfInputArea/2); //draw right green button
     fill(255);
-    text("" + currentLetter, width/2 - 100, height/2-sizeOfInputArea/3); //draw current letter
+    text("" + currentLetter, width/2 - 100, height/2-sizeOfInputArea/3 - 10); //draw current letter
   }
 }
 
@@ -223,6 +224,10 @@ void mousePressed()
   Vibrator vibrer = (Vibrator)   act.getSystemService(Context.VIBRATOR_SERVICE);
   VibrationEffect effect = VibrationEffect.createOneShot(25,2);
   vibrer.vibrate(effect);
+
+  if(abs(millis() - startTime) <= 10){
+    return;
+  }
 
   // If not focused and user clicks the left block focus on it
   if(selected == 0 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea/2,sizeOfInputArea)){
@@ -274,7 +279,7 @@ void mousePressed()
   }
 
   //You are allowed to have a next button outside the 1" area
-  if (didMouseClick(600, 400, 200, 200)) //check if click is in next button
+  if (didMouseClick(800, 350, 200, 200)) //check if click is in next button
   {
     nextTrial(); //if so, advance to next trial
   }
