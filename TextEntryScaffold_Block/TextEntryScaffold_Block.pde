@@ -81,7 +81,7 @@ void draw()
   background(255); //clear background
 
   drawWatch();
-  fill(255);
+  fill(105);
   rect(width/2-sizeOfInputArea/2 - 100, height/2-sizeOfInputArea/2, sizeOfInputArea, sizeOfInputArea); //input area should be 1" by 1"
 
   if (finishTime!=0)
@@ -124,16 +124,16 @@ void draw()
     // Black outlines
     textAlign(CENTER);
 
-    stroke(0);
-    fill(255);
+    stroke(255);
+    fill(105);
 
     // If unfocused
     if(selected == 0){
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 10; col = col + 1){
-          fill(255);
+          fill(105);
           rect(leftEdge + col*45, topOfKeys + row*101, 45, 101);
-          fill(0);
+          fill(255);
           text(chars[row * 10 + col], leftEdge + col*45 + 22, topOfKeys + row * 101 + 57);
         }
       }
@@ -147,6 +147,7 @@ void draw()
       // Left block
       rect(leftEdge,topOfKeys, 228,304);
 
+      stroke(0,0,255);
       // Right block
       rect(leftEdge + 228, topOfKeys, 228, 304);
     }
@@ -155,9 +156,9 @@ void draw()
     else if(selected == 1){
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
-          fill(255);
+          fill(105);
           rect(leftEdge + col*91.2, topOfKeys + row*101, 91, 101);
-          fill(0);
+          fill(255);
           text(leftKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 101 + 57);
         }
       }
@@ -167,9 +168,9 @@ void draw()
     else if(selected == 2){
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
-          fill(255);
+          fill(105);
           rect(leftEdge + col*91.2, topOfKeys + row*101, 91, 101);
-          fill(0);
+          fill(255);
           text(rightKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 101 + 57);
         }
       }
@@ -180,7 +181,7 @@ void draw()
 
     // fill(0, 255, 0); //green button
     // rect(width/2-sizeOfInputArea/2+sizeOfInputArea/2, height/2-sizeOfInputArea/2+sizeOfInputArea/2, sizeOfInputArea/2, sizeOfInputArea/2); //draw right green button
-    fill(0);
+    fill(255);
     text("" + currentLetter, width/2 - 100, height/2-sizeOfInputArea/4); //draw current letter
   }
 }
