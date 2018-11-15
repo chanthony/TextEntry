@@ -124,6 +124,14 @@ void draw()
     // Black outlines
     textAlign(CENTER);
 
+    //Left Block
+    fill(238, 169, 153);
+    rect(leftEdge,topOfKeys, 228,304);
+
+    // Right block
+    fill(156, 227, 233);
+    rect(leftEdge + 228, topOfKeys, 232, 304);
+
     stroke(255);
     fill(105);
 
@@ -131,25 +139,38 @@ void draw()
     if(selected == 0){
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 10; col = col + 1){
-          fill(105);
-          rect(leftEdge + col*45, topOfKeys + row*101, 45, 101);
-          fill(255);
-          text(chars[row * 10 + col], leftEdge + col*45 + 22, topOfKeys + row * 101 + 57);
+          // Don't draw the blank squares
+          if((row * 10 + col)%10 == 9 && row >= 1){
+          }
+          // If in the right half shift to the right ever so slightly
+          else if((row * 10 + col)%10 >= 5){
+            fill(105);
+            // The +10 here is to create gaps between the keys
+            rect(leftEdge + col*45 + 10, topOfKeys + row*101 + 10, 35, 81);
+            fill(255);
+            text(chars[row * 10 + col], leftEdge + col*45 + 27, topOfKeys + row * 101 + 57);
+          }
+          else{
+            fill(105);
+            rect(leftEdge + col*45 + 5, topOfKeys + row*101 + 10, 35, 81);
+            fill(255);
+            text(chars[row * 10 + col], leftEdge + col*45 + 22, topOfKeys + row * 101 + 57);
+          }
         }
       }
 
-      stroke(255,0,0);
-      strokeWeight(4);
+      // stroke(255,0,0);
+      // strokeWeight(4);
 
-      noFill();
+      // noFill();
 
-      // Outline blocks in thick red lines
-      // Left block
-      rect(leftEdge,topOfKeys, 228,304);
+      // // Outline blocks in thick red lines
+      // // Left block
+      // rect(leftEdge,topOfKeys, 228,304);
 
-      stroke(0,0,255);
-      // Right block
-      rect(leftEdge + 228, topOfKeys, 228, 304);
+      // stroke(0,0,255);
+      // // Right block
+      // rect(leftEdge + 228, topOfKeys, 228, 304);
     }
 
     // If focused on left block
