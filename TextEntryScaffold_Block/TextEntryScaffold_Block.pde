@@ -96,7 +96,7 @@ void draw()
   {
     fill(128);
     textAlign(CENTER);
-    text("Click to start time!", 280, 150); //display this messsage until the user clicks!
+    text("Click to start time!", 280, 550); //display this messsage until the user clicks!
   }
 
   if (startTime==0 & mousePressed)
@@ -108,17 +108,17 @@ void draw()
   {
     //feel free to change the size and position of the target/entered phrases and next button 
     textAlign(LEFT); //align the text left
-    fill(128);
-    text("Phrase " + (currTrialNum+1) + " of " + totalTrialNum, 70, 50); //draw the trial count
-    fill(128);
-    text("Target:   " + currentPhrase, 70, 100); //draw the target string
-    text("Entered:  " + currentTyped +"|", 70, 140); //draw what the user has entered thus far 
+    fill(0);
+    text("Phrase " + (currTrialNum+1) + " of " + totalTrialNum, 70, 550); //draw the trial count
+    fill(0);
+    text("Target:   " + currentPhrase, 70, 600); //draw the target string
+    text("Entered:  " + currentTyped +"|", 70, 640); //draw what the user has entered thus far 
     
     //draw very basic next button
-    fill(255, 0, 0);
-    rect(600, 400, 200, 200); //draw next button
+    fill(0, 255, 0);
+    rect(800, 350, 200, 200); //draw next button
     fill(255);
-    text("NEXT > ", 650, 450); //draw next label
+    text("NEXT > ", 850, 450); //draw next label
 
     //my draw code
     // Black outlines
