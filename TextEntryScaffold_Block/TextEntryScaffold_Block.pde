@@ -30,13 +30,13 @@ float leftEdge;
 float topOfKeys;
 
 // The Qwerty keyboard setup
-String[] chars = split("q w e r t y u i o p a s d f g h j k l  z x c v _ _ b n m  "," ");
+String[] chars = split("q w e r t y u i o p a s d f g h j k l   z x c v b n m   "," ");
 
 // The left block characters
-String[] leftKeys = split("q w e r t a s d f g z x c v _", " ");
+String[] leftKeys = split("q w e r t a s d f g  z x c v", " ");
 
 // The right block characters
-String[] rightKeys = split("y u i o p h j k l  _ b n m  ", " ");
+String[] rightKeys = split("y u i o p h j k l  b n m   ", " ");
 
 // The current number of consecutive clicks in the same square
 int curClicks = 0;
@@ -69,7 +69,7 @@ void setup()
   noStroke(); //my code doesn't use any strokes.
   
   leftEdge = width/2-sizeOfInputArea/2 - 100;
-  topOfKeys = height/2 - sizeOfInputArea/2 + sizeOfInputArea/3;
+  topOfKeys = height/2 - sizeOfInputArea/2 + sizeOfInputArea/5;
 
   // Haptic feedback stuff
   act = this.getActivity();
@@ -126,11 +126,11 @@ void draw()
 
     //Left Block
     fill(238, 169, 153);
-    rect(leftEdge,topOfKeys, 228,304);
+    rect(leftEdge,topOfKeys, 228,364);
 
     // Right block
     fill(156, 227, 233);
-    rect(leftEdge + 228, topOfKeys, 232, 304);
+    rect(leftEdge + 228, topOfKeys, 232, 364);
 
     stroke(255);
     fill(105);
@@ -140,61 +140,65 @@ void draw()
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 10; col = col + 1){
           // Don't draw the blank squares
-          if((row * 10 + col)%10 == 9 && row >= 1){
+          int index = row*10 + col;
+          if(chars[index].equals("")){
           }
           // If in the right half shift to the right ever so slightly
-          else if((row * 10 + col)%10 >= 5){
+          else if((index)%10 >= 5){
             fill(105);
             // The +10 here is to create gaps between the keys
-            rect(leftEdge + col*45 + 10, topOfKeys + row*101 + 10, 35, 81);
+            rect(leftEdge + col*45 + 10, topOfKeys + row*91 + 10, 35, 71);
             fill(255);
-            text(chars[row * 10 + col], leftEdge + col*45 + 27, topOfKeys + row * 101 + 57);
+            text(chars[index], leftEdge + col*45 + 27, topOfKeys + row * 91 + 57);
           }
           else{
             fill(105);
-            rect(leftEdge + col*45 + 5, topOfKeys + row*101 + 10, 35, 81);
+            rect(leftEdge + col*45 + 5, topOfKeys + row*91 + 10, 35, 71);
             fill(255);
-            text(chars[row * 10 + col], leftEdge + col*45 + 22, topOfKeys + row * 101 + 57);
+            text(chars[index], leftEdge + col*45 + 22, topOfKeys + row * 91 + 57);
           }
         }
       }
 
-      // stroke(255,0,0);
-      // strokeWeight(4);
+      fill(105);
+      //Draw the space bars as 3 units wide at the last row
+      rect(leftEdge + 90 + 5, topOfKeys + 273 + 10, 125, 71);
+      rect(leftEdge + 225 + 10, topOfKeys + 273 + 10, 135, 71);
 
-      // noFill();
-
-      // // Outline blocks in thick red lines
-      // // Left block
-      // rect(leftEdge,topOfKeys, 228,304);
-
-      // stroke(0,0,255);
-      // // Right block
-      // rect(leftEdge + 228, topOfKeys, 228, 304);
+      // Draw the space bar characters
+      fill(255);
+      text("\u23B5", leftEdge + 90 + 5 + 67, topOfKeys + 273 + 10 + 35);
+      text("\u23B5", leftEdge + 225 + 10 + 67, topOfKeys + 273 + 10 + 35);
     }
 
     // If focused on left block
     else if(selected == 1){
+      fill(105);
+      rect(leftEdge,topOfKeys, 456, 364);
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
+          int index = row*5 + col;
           fill(105);
-          rect(leftEdge + col*91.2, topOfKeys + row*101, 91, 101);
+          rect(leftEdge + col*91.2, topOfKeys + row*91, 91, 91);
           fill(255);
-          text(leftKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 101 + 57);
+          text(leftKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
         }
       }
+      text("\u2A3D\u2A3C", leftEdge + 228, topOfKeys + 273 + 55);
     }
     
     // If focused on right block
     else if(selected == 2){
+      rect(leftEdge,topOfKeys, 456, 364);
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
           fill(105);
-          rect(leftEdge + col*91.2, topOfKeys + row*101, 91, 101);
+          rect(leftEdge + col*91.2, topOfKeys + row*91, 91, 91);
           fill(255);
-          text(rightKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 101 + 57);
+          text(rightKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
         }
       }
+      text("\u2A3D\u2A3C", leftEdge + 228, topOfKeys + 273 + 55);
     }
 
     stroke(0);
@@ -203,7 +207,7 @@ void draw()
     // fill(0, 255, 0); //green button
     // rect(width/2-sizeOfInputArea/2+sizeOfInputArea/2, height/2-sizeOfInputArea/2+sizeOfInputArea/2, sizeOfInputArea/2, sizeOfInputArea/2); //draw right green button
     fill(255);
-    text("" + currentLetter, width/2 - 100, height/2-sizeOfInputArea/4); //draw current letter
+    text("" + currentLetter, width/2 - 100, height/2-sizeOfInputArea/3); //draw current letter
   }
 }
 
@@ -228,38 +232,40 @@ void mousePressed()
     selected = 2;
   }
   // If they click on the blank space unfocus
-  else if(didMouseClick(leftEdge, topOfKeys - 101, sizeOfInputArea, 101)){
+  else if(didMouseClick(leftEdge, topOfKeys - 91, sizeOfInputArea, 91)){
     selected = 0;
   }  
-  else if(selected == 1 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 304)){
+  else if(selected == 1 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
     // If we're focused on the left block and we clicked inside the block
-    int clickedRow = floor((mouseY - topOfKeys)/101);
+    int clickedRow = floor((mouseY - topOfKeys)/91);
     int clickedCol = floor((mouseX - leftEdge)/91.2);
     int clickedIndex = clickedRow * 5 + clickedCol;
 
     // If they hit the space button
-    if(clickedIndex == 14){
+    if(clickedRow == 3){
       currentTyped += " ";
-      currentLetter = "_";
+      currentLetter = "\u2A3D\u2A3C";
+    }
+    else if(clickedIndex == 10){
     }
     else{
       currentTyped += leftKeys[clickedIndex];
       currentLetter = leftKeys[clickedIndex];
     }
   }
-  else if(selected == 2  && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 304)){
-    // If we're focused on the left block and we clicked inside the block
-    int clickedRow = floor((mouseY - topOfKeys)/101);
+  else if(selected == 2  && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
+    // If we're focused on the right block and we clicked inside the block
+    int clickedRow = floor((mouseY - topOfKeys)/91);
     int clickedCol = floor((mouseX - leftEdge)/91.2);
     int clickedIndex = clickedRow * 5 + clickedCol;
 
-    // If they hit the space button
-    if(clickedIndex == 9 || clickedIndex == 14){
+    // Ignore blank spaces
+    if(clickedIndex == 9 || clickedIndex == 14 || clickedIndex == 13){
       return;
     }
-    if(clickedIndex == 10){
+    if(clickedRow == 3){
       currentTyped += " ";
-      currentLetter = "_";
+      currentLetter = "\u2A3D\u2A3C";
     }
     else{
       currentTyped += rightKeys[clickedIndex];
