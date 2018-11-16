@@ -29,29 +29,47 @@ float leftEdge;
 // Where the keys start
 float topOfKeys;
 
-// The Qwerty keyboard setup
-String[] chars = split("q w e r t y u i o p a s d f g h j k l   z x c v b n m   "," ");
-
-// The left block characters
-String[] leftKeys = split("q w e r t a s d f g  z x c v", " ");
-
-// The right block characters
-String[] rightKeys = split("y u i o p h j k l  b n m   ", " ");
-
-// The current number of consecutive clicks in the same square
-int curClicks = 0;
-
-// The last index clicked
-int lastIndex = -1;
+float last_mouseX;
+float last_mouseY;
 
 //Variables for my silly implementation. You can delete this:
 String currentLetter = "a";
 
-// Which screen they have selected
-// 0 = show both blocks
-// 1 = focus on left block
-// 2 = focus on right block
-int selected = 0;
+boolean first_press = false;
+boolean first_release = false;
+
+// Class for each square
+// Contains the letters for each square
+class KeySquare 
+{
+  public String center = "";
+  public String left = "";
+  public String top = "";
+  public String right = "";
+  public String bottom = "";
+
+  public void display(int row, int col){
+    stroke(255);
+    strokeWeight(1);
+    fill(105);
+
+    rect(leftEdge + 152*col, topOfKeys + 121*row, 152, 121);
+
+    float centerX = leftEdge + 152*col + 76;
+    float centerY = topOfKeys + 121*row + 65;
+
+    fill(255);
+    text(center, centerX, centerY);
+
+    text(left, centerX - 50, centerY);
+    text(right, centerX + 50, centerY);
+    text(top, centerX, centerY - 40);
+    text(bottom, centerX, centerY + 40);
+  }
+}
+
+// The list of squares
+KeySquare[] squares;
 
 // Haptic feedback event
 Activity act;
@@ -77,6 +95,8 @@ void setup()
 
   // Haptic feedback stuff
   act = this.getActivity();
+
+  squares = initKeys();
 }
 
 //You can modify anything in here. This is just a basic implementation.
@@ -108,7 +128,6 @@ void draw()
   if (startTime==0 & mousePressed)
   {
     nextTrial(); //start the trials!
-    selected = 0;
   }
 
   if (startTime!=0)
@@ -130,140 +149,16 @@ void draw()
     // Black outlines
     textAlign(CENTER);
 
-    //Left Block
-    fill(238, 169, 153);
-    rect(leftEdge,topOfKeys, 228,364);
-
-    // Right block
-    fill(156, 227, 233);
-    rect(leftEdge + 228, topOfKeys, 232, 364);
-
-    stroke(255);
     fill(105);
+    stroke(255);
+    strokeWeight(4);
 
-    // If unfocused
-    if(selected == 0){
-      for(int row = 0; row < 3; row = row + 1){
-        for(int col = 0; col < 10; col = col + 1){
-          // Don't draw the blank squares
-          int index = row*10 + col;
-          if(chars[index].equals("")){
-          }
-          // If in the right half shift to the right ever so slightly
-          else if((index)%10 >= 5){
-            fill(105);
-            // The +10 here is to create gaps between the keys
-            rect(leftEdge + col*45 + 10, topOfKeys + row*91 + 10, 35, 71);
-            fill(255);
-            text(chars[index], leftEdge + col*45 + 27, topOfKeys + row * 91 + 57);
-          }
-          else{
-            fill(105);
-            rect(leftEdge + col*45 + 5, topOfKeys + row*91 + 10, 35, 71);
-            fill(255);
-            text(chars[index], leftEdge + col*45 + 22, topOfKeys + row * 91 + 57);
-          }
-        }
+    squares[6].center = predict();
+
+    for(int row = 0; row < 3; row += 1){
+      for(int col = 0; col < 3; col += 1){
+        squares[row * 3 + col].display(row, col);
       }
-
-      fill(105);
-      //Draw the space bars as 3 units wide at the last row
-      rect(leftEdge + 90 + 5, topOfKeys + 273 + 10, 125, 71);
-      rect(leftEdge + 310 + 10, topOfKeys + 273 + 10, 135, 71);
-
-      // Draw the predictive keys
-      rect(leftEdge + 5, topOfKeys + 273 + 10, 75, 71);
-      rect(leftEdge + 225 + 10, topOfKeys + 273 + 10, 75, 71);
-
-      // Draw the space bar characters
-      fill(255);
-      text("\u23B5", leftEdge + 90 + 5 + 67, topOfKeys + 273 + 10 + 35);
-      text("\u23B5", leftEdge + 318 + 10 + 67, topOfKeys + 273 + 10 + 35);
-
-      // Write the predicted word
-      text(predict(), leftEdge + 42.5, topOfKeys + 273 + 10 + 35);
-      text(predict(), leftEdge + 225 + 10 + 42.5, topOfKeys + 273 + 10 + 35);
-
-    }
-
-    // If focused on left block
-    else if(selected == 1){
-      fill(105);
-      rect(leftEdge,topOfKeys, 456, 364);
-
-      strokeWeight(4);
-      stroke(238, 169, 153);
-      for(int row = 0; row < 3; row = row + 1){
-        for(int col = 0; col < 5; col = col + 1){
-          int index = row*5 + col;
-          fill(105);
-          rect(leftEdge + col*91.2, topOfKeys + row*91, 91, 91);
-          fill(255);
-          text(leftKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
-        }
-      }
-
-      fill(105);
-      // Predictive space key is a double wide
-      rect(leftEdge, topOfKeys + 273, 182, 91);
-      
-      // Space bar is a triple wide
-      rect(leftEdge + 182, topOfKeys + 273, 274, 91);
-
-      fill(255);
-      // Predicted Word
-      text(predict(), leftEdge + 91, topOfKeys + 273 + 55);
-
-      // Space bar character
-      text("\u2A3D\u2A3C", leftEdge + 182 + 137, topOfKeys + 273 + 55);
-
-      strokeWeight(1);
-      stroke(255);
-
-      ellipseMode(RADIUS);
-      fill(156, 227, 233);
-      ellipse(leftEdge + 401, topOfKeys - 45, 35, 35);
-      fill(255);
-      triangle(leftEdge + 401 - 10, topOfKeys - 45 - 20, leftEdge + 401 - 10, topOfKeys - 45 + 20, leftEdge + 401 + 20, topOfKeys - 45);
-    }
-    
-    // If focused on right block
-    else if(selected == 2){
-      stroke(156, 227, 233);
-      strokeWeight(4);
-
-      rect(leftEdge,topOfKeys, 456, 364);
-      for(int row = 0; row < 3; row = row + 1){
-        for(int col = 0; col < 5; col = col + 1){
-          fill(105);
-          rect(leftEdge + col*91.2, topOfKeys + row*91, 91, 91);
-          fill(255);
-          text(rightKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
-        }
-      }
-
-      fill(105);
-      // Predictive space key is a double wide
-      rect(leftEdge, topOfKeys + 273, 182, 91);
-      
-      // Space bar is a triple wide
-      rect(leftEdge + 182, topOfKeys + 273, 274, 91);
-
-      fill(255);
-      // Predicted Word
-      text(predict(), leftEdge + 91, topOfKeys + 273 + 55);
-
-      // Space bar character
-      text("\u2A3D\u2A3C", leftEdge + 182 + 137, topOfKeys + 273 + 55);
-
-      strokeWeight(1);
-      stroke(255);
-
-      ellipseMode(RADIUS);
-      fill(238, 169, 153);
-      ellipse(leftEdge + 55, topOfKeys - 45, 35, 35);
-      fill(255);
-      triangle(leftEdge + 55 + 10, topOfKeys - 45 + 20, leftEdge + 55 + 10, topOfKeys - 45 - 20, leftEdge + 55 - 20, topOfKeys - 45);
     }
 
     stroke(0);
@@ -289,41 +184,22 @@ void mousePressed()
   VibrationEffect effect = VibrationEffect.createOneShot(25,2);
   vibrer.vibrate(effect);
 
-  if(abs(millis() - startTime) <= 10){
+  if(first_press == false){
+    first_press = true;
     return;
   }
 
-  // If not focused and user clicks the left block focus on it
-  if(selected == 0 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea/2,sizeOfInputArea)){
-    selected = 1;
-  }
-  else if(selected == 0 && didMouseClick(leftEdge + sizeOfInputArea/2, topOfKeys, sizeOfInputArea/2, sizeOfInputArea)){
-    selected = 2;
-  }
-  // The right arrow button
-  else if(selected == 1 && didMouseClick(leftEdge + 341, topOfKeys - 90, 114, 90)){
-    selected = 2;
-  }
-  // The left arrow button
-  else if(selected == 2 && didMouseClick(leftEdge, topOfKeys - 90, 114, 90)){
-    selected = 1;
-  }
-  else if(didMouseClick(leftEdge, topOfKeys - 91, 465, 91)){
-    selected = 0;
-  }
-  else if(selected == 1 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
-    // If we're focused on the left block and we clicked inside the block
-    int clickedRow = floor((mouseY - topOfKeys)/91);
-    int clickedCol = floor((mouseX - leftEdge)/91.2);
-    int clickedIndex = clickedRow * 5 + clickedCol;
+  if(didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
+    int clickedRow = floor((mouseY - topOfKeys)/121);
+    int clickedCol = floor((mouseX - leftEdge)/152);
+    int clickedIndex = clickedRow * 3 + clickedCol;
 
-    // If they hit the space button
-    if(didMouseClick(leftEdge + 182, topOfKeys + 273, 274, 91)){
-      currentTyped += " ";
-      currentLetter = "\u2A3D\u2A3C";
-    }
+    last_mouseX = mouseX;
+    last_mouseY = mouseY;
+
     // If they hit the autocomplete button
-    else if(didMouseClick(leftEdge, topOfKeys + 273, 182, 91)){
+    if(clickedIndex == 6){
+      first_release = false;
       if (predict().equals("is")){
         currentTyped += "s";
         currentLetter = "is";
@@ -347,60 +223,13 @@ void mousePressed()
           currentLetter = "the";
         }
       }
-    }
-    else if(clickedIndex == 10){
-    }
-    else{
-      currentTyped += leftKeys[clickedIndex];
-      currentLetter = leftKeys[clickedIndex];
-    }
-  }
-  else if(selected == 2  && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
-    // If we're focused on the right block and we clicked inside the block
-    int clickedRow = floor((mouseY - topOfKeys)/91);
-    int clickedCol = floor((mouseX - leftEdge)/91.2);
-    int clickedIndex = clickedRow * 5 + clickedCol;
-
-    // Ignore blank spaces
-    if(clickedIndex == 9 || clickedIndex == 14 || clickedIndex == 13){
-      return;
-    }
-    // If they hit the space button
-    if(didMouseClick(leftEdge + 182, topOfKeys + 273, 274, 91)){
-      currentTyped += " ";
+    } else if(clickedIndex == 8){
       currentLetter = "\u2A3D\u2A3C";
-    }
-    // If they hit the autocomplete button
-    else if(didMouseClick(leftEdge, topOfKeys + 273, 182, 91)){
-      if (predict().equals("is")){
-        currentTyped += "s";
-        currentLetter = "is";
-      }
-      else if(predict().equals("of")){
-        currentTyped += "f";
-        currentLetter = "of";
-      }
-      else if(predict().equals("for")){
-        currentTyped += "or";
-        currentLetter = "for";
-      }
-      else{
-        // If this is being predicted entirely
-        if(currentLetter.equals("t")){
-          currentTyped += "he";
-          currentLetter = "the";
-        }
-        else{
-          currentTyped += "the";
-          currentLetter = "the";
-        }
-      }
-    }
-    else{
-      currentTyped += rightKeys[clickedIndex];
-      currentLetter = rightKeys[clickedIndex];
+      currentTyped += " ";
+      first_release = false;
     }
   }
+  
 
   //You are allowed to have a next button outside the 1" area
   if (didMouseClick(800, 350, 200, 200)) //check if click is in next button
@@ -409,6 +238,59 @@ void mousePressed()
   }
 }
 
+void mouseReleased(){
+  float delta_x = mouseX - last_mouseX;
+  float delta_y = mouseY - last_mouseY;
+
+  if(!first_release){
+    first_release = true;
+    return;
+  }
+
+  int clickedRow = floor((last_mouseY - topOfKeys)/121);
+  int clickedCol = floor((last_mouseX - leftEdge)/152);
+  int clickedIndex = clickedRow * 3 + clickedCol;
+
+  // Close enough to center
+  if(abs(delta_x) <= 30 && abs(delta_y) <= 30){
+    if(squares[clickedIndex].center.equals("") == false){
+      currentLetter = squares[clickedIndex].center;
+      currentTyped += squares[clickedIndex].center;
+    }
+  }
+  // Further horizontal than vertical
+  else if(abs(delta_x) >= abs(delta_y)){
+    // Right swipe
+    if(delta_x > 0){
+      if(squares[clickedIndex].right.equals("") == false){
+        currentLetter = squares[clickedIndex].right;
+        currentTyped += squares[clickedIndex].right;
+      }
+    }
+    else {// left swipe
+      if(squares[clickedIndex].left.equals("") == false){
+        currentLetter = squares[clickedIndex].left;
+        currentTyped += squares[clickedIndex].left;
+      }
+    }
+  }
+  // Further vertical than horizontal
+  else{
+    // Down swipe
+    if(delta_y > 0){
+      if(squares[clickedIndex].bottom.equals("") == false){
+        currentLetter = squares[clickedIndex].bottom;
+        currentTyped += squares[clickedIndex].bottom;
+      }
+    }
+    else {
+      if(squares[clickedIndex].top.equals("") == false){
+        currentLetter = squares[clickedIndex].top;
+        currentTyped += squares[clickedIndex].top;
+      }
+    }
+  }
+}
 
 void nextTrial()
 {
@@ -430,10 +312,6 @@ void nextTrial()
     lettersExpectedTotal+=currentPhrase.trim().length();
     lettersEnteredTotal+=currentTyped.trim().length();
     errorsTotal+=computeLevenshteinDistance(currentTyped.trim(), currentPhrase.trim());
-
-    lastIndex = -1;
-    curClicks = 0;
-    selected = 0;
   }
 
   //probably shouldn't need to modify any of this output / penalty code.
@@ -506,6 +384,62 @@ String predict()
     return "of";
   }
   return "the";
+}
+
+
+KeySquare[] initKeys()
+{
+  KeySquare topLeft = new KeySquare();
+  topLeft.center = "a";
+  topLeft.right = "b";
+  topLeft.bottom = "c";
+
+  KeySquare topMiddle = new KeySquare();
+  topMiddle.center = "d";
+  topMiddle.left = "e";
+  topMiddle.bottom = "g";
+  topMiddle.right = "f";
+
+  KeySquare topRight = new KeySquare();
+  topRight.center = "h";
+  topRight.left = "i";
+  topRight.bottom = "j";
+
+  KeySquare middleLeft = new KeySquare();
+  middleLeft.center = "k";
+  middleLeft.top = "l";
+  middleLeft.right = "m";
+  middleLeft.bottom = "n";
+
+  KeySquare middle = new KeySquare();
+  middle.center = "o";
+  middle.top = "p";
+  middle.left = "q";
+  middle.right = "r";
+  middle.bottom = "s";
+
+  KeySquare middleRight = new KeySquare();
+  middleRight.center = "t";
+  middleRight.top = "u";
+  middleRight.left = "v";
+  middleRight.bottom = "w";
+
+  // We'll fill this one with predictive text
+  KeySquare bottomLeft = new KeySquare();
+
+  KeySquare bottomMiddle = new KeySquare();
+  bottomMiddle.center = "x";
+  bottomMiddle.left = "y";
+  bottomMiddle.right = "z";
+
+  // Space bar
+  KeySquare bottomRight = new KeySquare();
+  bottomRight.center = "\u2A3D\u2A3C";
+
+  KeySquare[] squares = {topLeft, topMiddle, topRight, middleLeft, middle,
+                           middleRight, bottomLeft, bottomMiddle, bottomRight};
+
+  return squares;
 }
 
 //=========SHOULD NOT NEED TO TOUCH THIS METHOD AT ALL!==============
