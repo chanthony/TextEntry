@@ -190,6 +190,9 @@ void draw()
     else if(selected == 1){
       fill(105);
       rect(leftEdge,topOfKeys, 456, 364);
+
+      strokeWeight(4);
+      stroke(238, 169, 153);
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
           int index = row*5 + col;
@@ -214,6 +217,9 @@ void draw()
       // Space bar character
       text("\u2A3D\u2A3C", leftEdge + 182 + 137, topOfKeys + 273 + 55);
 
+      strokeWeight(1);
+      stroke(255);
+
       ellipseMode(RADIUS);
       fill(156, 227, 233);
       ellipse(leftEdge + 401, topOfKeys - 45, 35, 35);
@@ -223,6 +229,9 @@ void draw()
     
     // If focused on right block
     else if(selected == 2){
+      stroke(156, 227, 233);
+      strokeWeight(4);
+
       rect(leftEdge,topOfKeys, 456, 364);
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
@@ -247,7 +256,8 @@ void draw()
       // Space bar character
       text("\u2A3D\u2A3C", leftEdge + 182 + 137, topOfKeys + 273 + 55);
 
-
+      strokeWeight(1);
+      stroke(255);
 
       ellipseMode(RADIUS);
       fill(238, 169, 153);
