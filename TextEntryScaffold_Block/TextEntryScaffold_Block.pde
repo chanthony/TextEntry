@@ -169,12 +169,21 @@ void draw()
       fill(105);
       //Draw the space bars as 3 units wide at the last row
       rect(leftEdge + 90 + 5, topOfKeys + 273 + 10, 125, 71);
-      rect(leftEdge + 225 + 10, topOfKeys + 273 + 10, 135, 71);
+      rect(leftEdge + 310 + 10, topOfKeys + 273 + 10, 135, 71);
+
+      // Draw the predictive keys
+      rect(leftEdge + 5, topOfKeys + 273 + 10, 75, 71);
+      rect(leftEdge + 225 + 10, topOfKeys + 273 + 10, 75, 71);
 
       // Draw the space bar characters
       fill(255);
       text("\u23B5", leftEdge + 90 + 5 + 67, topOfKeys + 273 + 10 + 35);
-      text("\u23B5", leftEdge + 225 + 10 + 67, topOfKeys + 273 + 10 + 35);
+      text("\u23B5", leftEdge + 318 + 10 + 67, topOfKeys + 273 + 10 + 35);
+
+      // Write the predicted word
+      text(predict(), leftEdge + 42.5, topOfKeys + 273 + 10 + 35);
+      text(predict(), leftEdge + 225 + 10 + 42.5, topOfKeys + 273 + 10 + 35);
+
     }
 
     // If focused on left block
@@ -190,7 +199,20 @@ void draw()
           text(leftKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
         }
       }
-      text("\u2A3D\u2A3C", leftEdge + 228, topOfKeys + 273 + 55);
+
+      fill(105);
+      // Predictive space key is a double wide
+      rect(leftEdge, topOfKeys + 273, 182, 91);
+      
+      // Space bar is a triple wide
+      rect(leftEdge + 182, topOfKeys + 273, 274, 91);
+
+      fill(255);
+      // Predicted Word
+      text(predict(), leftEdge + 91, topOfKeys + 273 + 55);
+
+      // Space bar character
+      text("\u2A3D\u2A3C", leftEdge + 182 + 137, topOfKeys + 273 + 55);
 
       ellipseMode(RADIUS);
       fill(156, 227, 233);
@@ -210,7 +232,22 @@ void draw()
           text(rightKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
         }
       }
-      text("\u2A3D\u2A3C", leftEdge + 228, topOfKeys + 273 + 55);
+
+      fill(105);
+      // Predictive space key is a double wide
+      rect(leftEdge, topOfKeys + 273, 182, 91);
+      
+      // Space bar is a triple wide
+      rect(leftEdge + 182, topOfKeys + 273, 274, 91);
+
+      fill(255);
+      // Predicted Word
+      text(predict(), leftEdge + 91, topOfKeys + 273 + 55);
+
+      // Space bar character
+      text("\u2A3D\u2A3C", leftEdge + 182 + 137, topOfKeys + 273 + 55);
+
+
 
       ellipseMode(RADIUS);
       fill(238, 169, 153);
@@ -253,11 +290,16 @@ void mousePressed()
   else if(selected == 0 && didMouseClick(leftEdge + sizeOfInputArea/2, topOfKeys, sizeOfInputArea/2, sizeOfInputArea)){
     selected = 2;
   }
-  else if(selected == 1 && didMouseClick(leftEdge + 341, topOfKeys - 90, 90, 90)){
+  // The right arrow button
+  else if(selected == 1 && didMouseClick(leftEdge + 341, topOfKeys - 90, 114, 90)){
     selected = 2;
   }
-  else if(selected == 2 && didMouseClick(leftEdge, topOfKeys - 90, 90, 90)){
+  // The left arrow button
+  else if(selected == 2 && didMouseClick(leftEdge, topOfKeys - 90, 114, 90)){
     selected = 1;
+  }
+  else if(didMouseClick(leftEdge, topOfKeys - 91, 465, 91)){
+    selected = 0;
   }
   else if(selected == 1 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
     // If we're focused on the left block and we clicked inside the block
@@ -266,9 +308,35 @@ void mousePressed()
     int clickedIndex = clickedRow * 5 + clickedCol;
 
     // If they hit the space button
-    if(clickedRow == 3){
+    if(didMouseClick(leftEdge + 182, topOfKeys + 273, 274, 91)){
       currentTyped += " ";
       currentLetter = "\u2A3D\u2A3C";
+    }
+    // If they hit the autocomplete button
+    else if(didMouseClick(leftEdge, topOfKeys + 273, 182, 91)){
+      if (predict().equals("is")){
+        currentTyped += "s";
+        currentLetter = "is";
+      }
+      else if(predict().equals("of")){
+        currentTyped += "f";
+        currentLetter = "of";
+      }
+      else if(predict().equals("for")){
+        currentTyped += "or";
+        currentLetter = "for";
+      }
+      else{
+        // If this is being predicted entirely
+        if(currentLetter.equals("t")){
+          currentTyped += "he";
+          currentLetter = "the";
+        }
+        else{
+          currentTyped += "the";
+          currentLetter = "the";
+        }
+      }
     }
     else if(clickedIndex == 10){
     }
@@ -287,9 +355,36 @@ void mousePressed()
     if(clickedIndex == 9 || clickedIndex == 14 || clickedIndex == 13){
       return;
     }
-    if(clickedRow == 3){
+    // If they hit the space button
+    if(didMouseClick(leftEdge + 182, topOfKeys + 273, 274, 91)){
       currentTyped += " ";
       currentLetter = "\u2A3D\u2A3C";
+    }
+    // If they hit the autocomplete button
+    else if(didMouseClick(leftEdge, topOfKeys + 273, 182, 91)){
+      if (predict().equals("is")){
+        currentTyped += "s";
+        currentLetter = "is";
+      }
+      else if(predict().equals("of")){
+        currentTyped += "f";
+        currentLetter = "of";
+      }
+      else if(predict().equals("for")){
+        currentTyped += "or";
+        currentLetter = "for";
+      }
+      else{
+        // If this is being predicted entirely
+        if(currentLetter.equals("t")){
+          currentTyped += "he";
+          currentLetter = "the";
+        }
+        else{
+          currentTyped += "the";
+          currentLetter = "the";
+        }
+      }
     }
     else{
       currentTyped += rightKeys[clickedIndex];
@@ -386,6 +481,21 @@ void drawWatch()
   imageMode(CENTER);
   image(watch,0,0);
   popMatrix();
+}
+
+// Function to return next word prediction
+String predict()
+{
+  if(currentLetter.equals("i")){
+    return "is";
+  }
+  else if (currentLetter.equals("f")){
+    return "for";
+  }
+  else if (currentLetter.equals("o")){
+    return "of";
+  }
+  return "the";
 }
 
 //=========SHOULD NOT NEED TO TOUCH THIS METHOD AT ALL!==============
