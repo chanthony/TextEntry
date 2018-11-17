@@ -18,7 +18,7 @@ float lettersExpectedTotal = 0; //a running total of the number of letters expec
 float errorsTotal = 0; //a running total of the number of errors (when hitting next)
 String currentPhrase = ""; //the current target phrase
 String currentTyped = ""; //what the user has typed so far
-final int DPIofYourDeviceScreen = 456; //you will need to look up the DPI or PPI of your device to make sure you get the right scale!!
+final int DPIofYourDeviceScreen = 500;//456; //you will need to look up the DPI or PPI of your device to make sure you get the right scale!!
 //http://en.wikipedia.org/wiki/List_of_displays_by_pixel_density
 final float sizeOfInputArea = DPIofYourDeviceScreen*1; //aka, 1.0 inches square!
 PImage watch;
@@ -44,6 +44,14 @@ int curClicks = 0;
 // The last index clicked
 int lastIndex = -1;
 
+// where are we clicking
+int clickedRow = 0;
+int clickedCol = 0;
+
+// highlighting cur letter
+int curRow = 0;
+int curCol = 0;
+
 //Variables for my silly implementation. You can delete this:
 String currentLetter = "a";
 
@@ -68,7 +76,9 @@ void setup()
   Collections.shuffle(Arrays.asList(phrases)); //randomize the order of the phrases
 
   orientation(PORTRAIT); //can also be PORTRAIT -- sets orientation on android device
-  size(1300, 2300); //Sets the size of the app. You should modify this to your device's native size. Many phones today are 1080 wide by 1920 tall.
+  //size(1300, 2300); //Sets the size of the app. You should modify this to your device's native size. Many phones today are 1080 wide by 1920 tall.  
+  size(displayWidth, displayHeight);
+  println(displayWidth + " " + displayHeight);
   textFont(createFont("arial.ttf", 36)); //set the font to arial 24
   noStroke(); //my code doesn't use any strokes.
   
@@ -196,7 +206,10 @@ void draw()
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
           int index = row*5 + col;
-          fill(105);
+          if (row == curRow & col == curCol)
+            fill(89,123,106);
+          else
+            fill(105);
           rect(leftEdge + col*91.2, topOfKeys + row*91, 91, 91);
           fill(255);
           text(leftKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
@@ -235,7 +248,10 @@ void draw()
       rect(leftEdge,topOfKeys, 456, 364);
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
-          fill(105);
+          if (row == curRow & col == curCol)
+            fill(89,123,106);
+          else
+            fill(105);
           rect(leftEdge + col*91.2, topOfKeys + row*91, 91, 91);
           fill(255);
           text(rightKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
@@ -281,41 +297,23 @@ boolean didMouseClick(float x, float y, float w, float h) //simple function to d
   return (mouseX > x && mouseX<x+w && mouseY>y && mouseY<y+h); //check to see if it is in button bounds
 }
 
-
-void mousePressed()
+void mouseDragged()
 {
+  curRow = floor((mouseY - topOfKeys)/91);
+  curCol = floor((mouseX - leftEdge)/91.2);
+}
 
-  Vibrator vibrer = (Vibrator)   act.getSystemService(Context.VIBRATOR_SERVICE);
-  VibrationEffect effect = VibrationEffect.createOneShot(25,2);
-  vibrer.vibrate(effect);
-
-  if(abs(millis() - startTime) <= 10){
-    return;
-  }
-
-  // If not focused and user clicks the left block focus on it
-  if(selected == 0 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea/2,sizeOfInputArea)){
-    selected = 1;
-  }
-  else if(selected == 0 && didMouseClick(leftEdge + sizeOfInputArea/2, topOfKeys, sizeOfInputArea/2, sizeOfInputArea)){
-    selected = 2;
-  }
-  // The right arrow button
-  else if(selected == 1 && didMouseClick(leftEdge + 341, topOfKeys - 90, 114, 90)){
-    selected = 2;
-  }
-  // The left arrow button
-  else if(selected == 2 && didMouseClick(leftEdge, topOfKeys - 90, 114, 90)){
-    selected = 1;
-  }
-  else if(didMouseClick(leftEdge, topOfKeys - 91, 465, 91)){
-    selected = 0;
-  }
-  else if(selected == 1 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
+void mouseReleased()
+{
+  curRow = -1;
+  curCol = -1;
+  
+  if(selected == 1 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
     // If we're focused on the left block and we clicked inside the block
     int clickedRow = floor((mouseY - topOfKeys)/91);
     int clickedCol = floor((mouseX - leftEdge)/91.2);
     int clickedIndex = clickedRow * 5 + clickedCol;
+    println("currently click: " + clickedIndex);
 
     // If they hit the space button
     if(didMouseClick(leftEdge + 182, topOfKeys + 273, 274, 91)){
@@ -401,7 +399,42 @@ void mousePressed()
       currentLetter = rightKeys[clickedIndex];
     }
   }
+  
+}
 
+void mousePressed()
+{
+
+  Vibrator vibrer = (Vibrator)   act.getSystemService(Context.VIBRATOR_SERVICE);
+  VibrationEffect effect = VibrationEffect.createOneShot(25,2);
+  vibrer.vibrate(effect);
+
+  if(abs(millis() - startTime) <= 10){
+    return;
+  }
+
+  // If not focused and user clicks the left block focus on it
+  if(selected == 0 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea/2,sizeOfInputArea)){
+    selected = 1;
+  }
+  else if(selected == 0 && didMouseClick(leftEdge + sizeOfInputArea/2, topOfKeys, sizeOfInputArea/2, sizeOfInputArea)){
+    selected = 2;
+  }
+  // The right arrow button
+  else if(selected == 1 && didMouseClick(leftEdge + 341, topOfKeys - 90, 114, 90)){
+    selected = 2;
+  }
+  // The left arrow button
+  else if(selected == 2 && didMouseClick(leftEdge, topOfKeys - 90, 114, 90)){
+    selected = 1;
+  }
+  else if(didMouseClick(leftEdge, topOfKeys - 91, 465, 91)){
+    selected = 0;
+  }
+  
+  curRow = floor((mouseY - topOfKeys)/91);
+  curCol = floor((mouseX - leftEdge)/91.2);
+  
   //You are allowed to have a next button outside the 1" area
   if (didMouseClick(800, 350, 200, 200)) //check if click is in next button
   {
