@@ -18,7 +18,7 @@ float lettersExpectedTotal = 0; //a running total of the number of letters expec
 float errorsTotal = 0; //a running total of the number of errors (when hitting next)
 String currentPhrase = ""; //the current target phrase
 String currentTyped = ""; //what the user has typed so far
-final int DPIofYourDeviceScreen = 500;//456; //you will need to look up the DPI or PPI of your device to make sure you get the right scale!!
+final int DPIofYourDeviceScreen = 456; //you will need to look up the DPI or PPI of your device to make sure you get the right scale!!
 //http://en.wikipedia.org/wiki/List_of_displays_by_pixel_density
 final float sizeOfInputArea = DPIofYourDeviceScreen*1; //aka, 1.0 inches square!
 PImage watch;
@@ -76,9 +76,7 @@ void setup()
   Collections.shuffle(Arrays.asList(phrases)); //randomize the order of the phrases
 
   orientation(PORTRAIT); //can also be PORTRAIT -- sets orientation on android device
-  //size(1300, 2300); //Sets the size of the app. You should modify this to your device's native size. Many phones today are 1080 wide by 1920 tall.  
-  size(displayWidth, displayHeight);
-  println(displayWidth + " " + displayHeight);
+  size(1300, 2300); //Sets the size of the app. You should modify this to your device's native size. Many phones today are 1080 wide by 1920 tall.  
   textFont(createFont("arial.ttf", 36)); //set the font to arial 24
   noStroke(); //my code doesn't use any strokes.
   
@@ -216,11 +214,23 @@ void draw()
         }
       }
 
-      fill(105);
+
+      if(curRow == 3 && curCol >= 0 && curCol < 2){
+        fill(89,123,106);
+      }
+      else{
+        fill(105);
+      }
       // Predictive space key is a double wide
       rect(leftEdge, topOfKeys + 273, 182, 91);
       
       // Space bar is a triple wide
+      if(curRow == 3 && curCol >= 2){
+        fill(89,123,106);
+      }
+      else{
+        fill(105);
+      }
       rect(leftEdge + 182, topOfKeys + 273, 274, 91);
 
       fill(255);
@@ -258,11 +268,22 @@ void draw()
         }
       }
 
-      fill(105);
+      if(curRow == 3 && curCol >= 0 && curCol < 2){
+        fill(89,123,106);
+      }
+      else{
+        fill(105);
+      }
       // Predictive space key is a double wide
       rect(leftEdge, topOfKeys + 273, 182, 91);
       
       // Space bar is a triple wide
+      if(curRow == 3 && curCol >= 2){
+        fill(89,123,106);
+      }
+      else{
+        fill(105);
+      }
       rect(leftEdge + 182, topOfKeys + 273, 274, 91);
 
       fill(255);
