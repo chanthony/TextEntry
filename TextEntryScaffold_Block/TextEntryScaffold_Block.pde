@@ -189,8 +189,8 @@ void draw()
       text("\u23B5", leftEdge + 318 + 10 + 67, topOfKeys + 273 + 10 + 35);
 
       // Write the predicted word
-      text(predict(), leftEdge + 42.5, topOfKeys + 273 + 10 + 35);
-      text(predict(), leftEdge + 225 + 10 + 42.5, topOfKeys + 273 + 10 + 35);
+      text("del", leftEdge + 42.5, topOfKeys + 273 + 10 + 35);
+      text("del", leftEdge + 225 + 10 + 42.5, topOfKeys + 273 + 10 + 35);
 
     }
 
@@ -204,10 +204,7 @@ void draw()
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
           int index = row*5 + col;
-          if (row == curRow & col == curCol)
-            fill(89,123,106);
-          else
-            fill(105);
+          fill(105);
           rect(leftEdge + col*91.2, topOfKeys + row*91, 91, 91);
           fill(255);
           text(leftKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
@@ -215,27 +212,17 @@ void draw()
       }
 
 
-      if(curRow == 3 && curCol >= 0 && curCol < 2){
-        fill(89,123,106);
-      }
-      else{
-        fill(105);
-      }
+      fill(105);
       // Predictive space key is a double wide
       rect(leftEdge, topOfKeys + 273, 182, 91);
       
       // Space bar is a triple wide
-      if(curRow == 3 && curCol >= 2){
-        fill(89,123,106);
-      }
-      else{
-        fill(105);
-      }
+      fill(105);
       rect(leftEdge + 182, topOfKeys + 273, 274, 91);
 
       fill(255);
       // Predicted Word
-      text(predict(), leftEdge + 91, topOfKeys + 273 + 55);
+      text("del", leftEdge + 91, topOfKeys + 273 + 55);
 
       // Space bar character
       text("\u2A3D\u2A3C", leftEdge + 182 + 137, topOfKeys + 273 + 55);
@@ -258,10 +245,7 @@ void draw()
       rect(leftEdge,topOfKeys, 456, 364);
       for(int row = 0; row < 3; row = row + 1){
         for(int col = 0; col < 5; col = col + 1){
-          if (row == curRow & col == curCol)
-            fill(89,123,106);
-          else
-            fill(105);
+          fill(105);
           rect(leftEdge + col*91.2, topOfKeys + row*91, 91, 91);
           fill(255);
           text(rightKeys[row * 5 + col], leftEdge + col*91 + 46, topOfKeys + row * 91 + 57);
@@ -278,17 +262,12 @@ void draw()
       rect(leftEdge, topOfKeys + 273, 182, 91);
       
       // Space bar is a triple wide
-      if(curRow == 3 && curCol >= 2){
-        fill(89,123,106);
-      }
-      else{
-        fill(105);
-      }
+      fill(105);
       rect(leftEdge + 182, topOfKeys + 273, 274, 91);
 
       fill(255);
       // Predicted Word
-      text(predict(), leftEdge + 91, topOfKeys + 273 + 55);
+      text("del", leftEdge + 91, topOfKeys + 273 + 55);
 
       // Space bar character
       text("\u2A3D\u2A3C", leftEdge + 182 + 137, topOfKeys + 273 + 55);
@@ -326,10 +305,25 @@ void mouseDragged()
 
 void mouseReleased()
 {
-  curRow = -1;
-  curCol = -1;
-  
-  if(selected == 1 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
+    // If not focused and user clicks the left block focus on it
+  if(selected == 0 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea/2,sizeOfInputArea)){
+    selected = 1;
+  }
+  else if(selected == 0 && didMouseClick(leftEdge + sizeOfInputArea/2, topOfKeys, sizeOfInputArea/2, sizeOfInputArea)){
+    selected = 2;
+  }
+  // The right arrow button
+  else if(selected == 1 && didMouseClick(leftEdge + 341, topOfKeys - 90, 114, 90)){
+    selected = 2;
+  }
+  // The left arrow button
+  else if(selected == 2 && didMouseClick(leftEdge, topOfKeys - 90, 114, 90)){
+    selected = 1;
+  }
+  else if(didMouseClick(leftEdge, topOfKeys - 91, 465, 91)){
+    selected = 0;
+  }
+  else if(selected == 1 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea, 364)){
     // If we're focused on the left block and we clicked inside the block
     int clickedRow = floor((mouseY - topOfKeys)/91);
     int clickedCol = floor((mouseX - leftEdge)/91.2);
@@ -343,28 +337,8 @@ void mouseReleased()
     }
     // If they hit the autocomplete button
     else if(didMouseClick(leftEdge, topOfKeys + 273, 182, 91)){
-      if (predict().equals("is")){
-        currentTyped += "s";
-        currentLetter = "is";
-      }
-      else if(predict().equals("of")){
-        currentTyped += "f";
-        currentLetter = "of";
-      }
-      else if(predict().equals("for")){
-        currentTyped += "or";
-        currentLetter = "for";
-      }
-      else{
-        // If this is being predicted entirely
-        if(currentLetter.equals("t")){
-          currentTyped += "he";
-          currentLetter = "the";
-        }
-        else{
-          currentTyped += "the";
-          currentLetter = "the";
-        }
+      if(currentTyped.length() != 0){
+        currentTyped = currentTyped.substring(0, currentTyped.length() - 1);
       }
     }
     else if(clickedIndex == 10){
@@ -391,28 +365,8 @@ void mouseReleased()
     }
     // If they hit the autocomplete button
     else if(didMouseClick(leftEdge, topOfKeys + 273, 182, 91)){
-      if (predict().equals("is")){
-        currentTyped += "s";
-        currentLetter = "is";
-      }
-      else if(predict().equals("of")){
-        currentTyped += "f";
-        currentLetter = "of";
-      }
-      else if(predict().equals("for")){
-        currentTyped += "or";
-        currentLetter = "for";
-      }
-      else{
-        // If this is being predicted entirely
-        if(currentLetter.equals("t")){
-          currentTyped += "he";
-          currentLetter = "the";
-        }
-        else{
-          currentTyped += "the";
-          currentLetter = "the";
-        }
+      if(currentTyped.length() != 0){
+        currentTyped = currentTyped.substring(0, currentTyped.length() - 1);
       }
     }
     else{
@@ -434,24 +388,6 @@ void mousePressed()
     return;
   }
 
-  // If not focused and user clicks the left block focus on it
-  if(selected == 0 && didMouseClick(leftEdge, topOfKeys, sizeOfInputArea/2,sizeOfInputArea)){
-    selected = 1;
-  }
-  else if(selected == 0 && didMouseClick(leftEdge + sizeOfInputArea/2, topOfKeys, sizeOfInputArea/2, sizeOfInputArea)){
-    selected = 2;
-  }
-  // The right arrow button
-  else if(selected == 1 && didMouseClick(leftEdge + 341, topOfKeys - 90, 114, 90)){
-    selected = 2;
-  }
-  // The left arrow button
-  else if(selected == 2 && didMouseClick(leftEdge, topOfKeys - 90, 114, 90)){
-    selected = 1;
-  }
-  else if(didMouseClick(leftEdge, topOfKeys - 91, 465, 91)){
-    selected = 0;
-  }
   
   curRow = floor((mouseY - topOfKeys)/91);
   curCol = floor((mouseX - leftEdge)/91.2);
@@ -488,6 +424,9 @@ void nextTrial()
     lastIndex = -1;
     curClicks = 0;
     selected = 0;
+    
+    curRow = -1;
+    curCol = -1;
   }
 
   //probably shouldn't need to modify any of this output / penalty code.
